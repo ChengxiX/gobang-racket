@@ -19,11 +19,13 @@
 (define value (lambda (situ) (
                               
                               )))
-(define change)
-(define area (lambda (situ) (cons (
-                                   cons (apply max (map (lambda (x) (car x)) situ)) (apply max (map (lambda (x) (cdr x)) situ))
-                                        )
-                                  (
-                                   cons (apply min (map (lambda (x) (car x)) situ)) (apply min (map (lambda (x) (cdr x)) situ))
-                                        ))
-               ))
+;(define change)
+(define area (lambda (situ) (let ((i (cons (
+                                            cons (min 14 (+ (apply max (map (lambda (x) (car x)) situ)) 2)) (min 14 (+ (apply max (map (lambda (x) (cdr x)) situ))))
+                                                 )
+                                           (
+                                            cons (max 0 (- (apply min (map (lambda (x) (car x)) situ)) 2)) (max (- (apply min (map (lambda (x) (cdr x)) situ)) 2))
+                                                 )))
+                                  (draw (lambda (
+                                                 diagonal x y) (if (<= x (car (car diagonal))) (cons (if (= y (cdr (car diagonal))) (draw diagonal (+ x 1) cdr(cdr (diagonal))) (draw diagonal x (+ y 1))) (cons x y)) ())
+                                                                 ))) (draw i (cdr i)))))
