@@ -22,9 +22,6 @@
                                                                                                                            (let (y (maxmin re depth aim situ alpha (min x beta) (cdr able))) (if (fan (car y) (car x)) x y)) x
                                                                                                                            ))))
 (define stopcom 4.2)
-(define xianshou? 0) ;如果是0则是AI先手，如果是1则是AI后手（人先手）
-
-(define split (lambda (situ depth) [if (eq? (car situ) stopcom) (list (list stopcom) (list stopcom)) [let ((a (split (cdr situ) (+ 1 depth)))) (if (= (remainder depth 2) xianshou?) (list (cons (car situ) (car a)) (car (cdr a))) (list (car a) (cons (car situ) (car (cdr a)))))]]))
 
 ;value函数返回值结构：数字
 ;(define value (lambda (situ) (
