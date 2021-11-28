@@ -40,4 +40,6 @@
 (define next (lambda (diagonol x y situ) (if (<= x (car (cdr diagonol))) (if (member (cons x y) situ) (if (= y (car (cdr (cdr diagonol)))) (next diagonol (+ 1 x) (car (cdr (car diagonol))) situ) (next diagonol x (+ 1 y) situ)) (cons (cons x y) (if (= y (car (cdr (cdr diagonol)))) (next diagonol (+ 1 x) (car (cdr (car diagonol))) situ) (next diagonol x (+ 1 y) situ)))) null)))
 
 (define classify (lambda (situ depth) [if (eq? situ null) null (if (= (remainder depth 2) xianshou?) (cons (cons (car situ) 0) (classify (cdr situ) (+ 1 depth))) (cons (cons (car situ) 1) (classify (cdr situ) (+ 1 depth))))])) ;1是对方下的棋子，0是我方下的,输出示例'(((1 0) . 0) ((3 4) . 1) ((5 6) . 0))
-(define vertical (lambda (situ depth) (if (eq? situ null) (make-hash) (let ((a (vertical (cdr situ) (+ depth 1))) (xy (car situ))) (if (hash-ref (car (car xy)) #f) () (hash-set! a (car (car xy)) (list (cons (car (cdr (car xy))))))))))) ;hash表在chez scheme里面有不同的写法
+(define vertical (lambda (situ depth) (if (eq? situ null) (hash) (let* ((a (vertical (cdr situ) (+ depth 1))) (xy (car situ)) (valueofx (hash-ref a (car xy) null)) (selves? (if (= (remainder depth 2) xianshou?) 0 1))) ;1是对方下的棋子，0是我方下的
+                                                                        (if (eq? valueofx null) (hash-set a (car xy) (list (cons (car (cdr xy)) selves?))) (hash-set (hash-remove a (car xy)) (car xy) (cons (cons (car (cdr xy)) selves?) valueofx))))))) ;hash表在chez scheme里面有不同的写法。不可变散列表
+(vertical '((1 3) (1 4) (1 5) (2 4) (6 7)) 0)
