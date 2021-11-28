@@ -9,27 +9,24 @@
                                                     (list (value situ) situ)
                                                     )))
 ;(define maxnode (lambda (depth aim situ alpha beta able) (
-;                                                          let ((x (node (+ depth 1) aim (cons situ (car able)) beta))) (if (and (< (car x) alpha) (not (eq? (cdr able) stopcom)))
+;                                                          let ((x (node (+ depth 1) aim (cons situ (car able)) beta))) (if (and (< (car x) alpha) (not (eq? able null)))
 ;                                                                                                                           (let (y (maxnode depth aim situ alpha (max x beta) (cdr able))) (if (< (car y) (car x)) x y)) x
 ;                                                                                                                           ))))
 ;(define minnode (lambda (depth aim situ alpha beta able) (
-;                                                          let ((x (node (+ depth 1) aim (cons situ (car able)) beta))) (if (and (> (car x) alpha) (not (eq? (cdr able) stopcom)))
+;                                                          let ((x (node (+ depth 1) aim (cons situ (car able)) beta))) (if (and (> (car x) alpha) (not (eq? able null)))
 ;                                                                                                                           (let (y (maxnode depth aim situ alpha (min x beta) (cdr able))) (if (> (car y) (car x)) x y)) x
 ;                                                                                                                           ))))
 
 (define maxmin (lambda (re depth aim situ alpha beta able) (
-                                                          let ((x (node (+ depth 1) aim (cons situ (car able)) beta)) (fan (if (= re 0)) < >)) (if (and (fan (car x) alpha) (not (eq? (cdr able) stopcom)))
-                                                                                                                           (let (y (maxmin re depth aim situ alpha (min x beta) (cdr able))) (if (fan (car y) (car x)) x y)) x
+                                                          let ((x (node (+ depth 1) aim (cons situ (car able)) beta)) (fan (if (= re 0) < >))) (if (and (fan (car x) alpha) (not (eq? able null)))
+                                                                                                                           (let ((y (maxmin re depth aim situ alpha (min x beta) (cdr able)))) (if (fan (car y) (car x)) x y)) x
                                                                                                                            ))))
-(define stopcom 4.2)
 (define xianshou? 0) ;如果是0则是AI先手，如果是1则是AI后手（人先手）
 
-(define split (lambda (situ depth) [if (eq? (car situ) stopcom) (list (list stopcom) (list stopcom)) [let ((a (split (cdr situ) (+ 1 depth)))) (if (= (remainder depth 2) xianshou?) (list (cons (car situ) (car a)) (car (cdr a))) (list (car a) (cons (car situ) (car (cdr a)))))]]))
-
 ;value函数返回值结构：数字
-;(define value (lambda (situ) (
-;                              
-;                              )))
+(define value (lambda (situ) (
+                              1
+                              )))
 
 (define area (lambda (situ)
                (cons (
@@ -40,4 +37,7 @@
                            ))
                ))
 
-(define next (lambda (diagonol x y situ) (if (<= x (car (cdr diagonol))) (let ([a (if (= y (car (cdr (cdr diagonol)))) (next diagonol (+ 1 x) (car (cdr (car diagonol))) situ) (next diagonol x (+ 1 y) situ))]) (if (member (cons x y) situ) a (cons (cons x y) a))) stopcom)))
+(define next (lambda (diagonol x y situ) (if (<= x (car (cdr diagonol))) (if (member (cons x y) situ) (if (= y (car (cdr (cdr diagonol)))) (next diagonol (+ 1 x) (car (cdr (car diagonol))) situ) (next diagonol x (+ 1 y) situ)) (cons (cons x y) (if (= y (car (cdr (cdr diagonol)))) (next diagonol (+ 1 x) (car (cdr (car diagonol))) situ) (next diagonol x (+ 1 y) situ)))) null)))
+
+(define classify (lambda (situ depth) [if (eq? situ null) null (if (= (remainder depth 2) xianshou?) (cons (cons (car situ) 0) (classify (cdr situ) (+ 1 depth))) (cons (cons (car situ) 1) (classify (cdr situ) (+ 1 depth))))])) ;1是对方下的棋子，0是我方下的,输出示例'(((1 0) . 0) ((3 4) . 1) ((5 6) . 0))
+(define vertical (lambda (situ depth) (if (eq? situ null) (make-hash) (let ((a (vertical (cdr situ) (+ depth 1))) (xy (car situ))) (if (hash-ref (car (car xy)) #f) () (hash-set! a (car (car xy)) (list (cons (car (cdr (car xy))))))))))) ;hash表在chez scheme里面有不同的写法
