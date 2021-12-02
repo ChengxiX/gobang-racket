@@ -35,3 +35,7 @@
                                                                                                             (if value-topright-bottomleft (hash-set (hash-remove topright-bottomleft (+ (car (cdr xy)) (car xy))) (+ (car (cdr xy)) (car xy)) (cons (cons (+ (car (cdr xy)) (car xy)) selves?) value-topright-bottomleft)) (hash-set topright-bottomleft (+ (car (cdr xy)) (car xy)) (list (cons (- (car (cdr xy)) (car xy)) selves?))))
                                                                                                             )
                                                                                                        ))))
+                                                                                                       
+(define sortbycar (lambda (line) (sort line (lambda (x y)
+  (< (car x) (car y)))
+)))
