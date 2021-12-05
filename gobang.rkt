@@ -7,9 +7,9 @@
 
 (define branch (lambda (opposite depth aim situ alpha beta able) (
                                                           let ((x (node (+ depth 1) aim (cons (car able) situ) beta))) (if (and (opposite (car x) alpha) (not (eq? (cdr able) null)))
-                                                                                                                           (let ((y (branch opposite depth aim situ alpha (min x beta) (cdr able)))) (if (opposite (car y) (car x)) x y)) x
+                                                                                                                           (let ((y (branch opposite depth aim situ alpha (min (car x) beta) (cdr able)))) (if (opposite (car y) (car x)) x y)) x
                                                                                                                            ))))
-(define AI-first 0) ;如果是0则是AI先手，如果是1则是AI后手（人先手）
+(define AI-first 1) ;如果是0则是AI先手，如果是1则是AI后手（人先手）
 
 ;value函数返回值结构：数字
 (define value (lambda (situ) (
@@ -46,7 +46,7 @@
 ;valueline递归返回(value 自己的坐标 落子方 连击次数)
 ;需要((1 #t) (3 #f))
 (define valueline (lambda (line) (if (eq? line null) null (let ((a (valueline (cdr line)))) 
-                                                            (if (eq? a null) (list 0 (car (car line)) (cdr (car line)) 1) (if (> (car (cdr (cdr (cdr a)))) 4) (list (+ (if (car (cdr (cdr a))) (* attack-ratio 成五) (* -1 成五)) (car a)) (car (car line)) (car (cdr (car line))) 0) (let ((diff (- (car (cdr a)) (car (car line))))) (if (= diff 1) (if (not (xor (car (cdr (car line))) (car (cdr (cdr a))))) (list (car a) (car (car line)) (car (cdr (car line))) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (= (round (car a)) (car a)) (if (car (cdr (car line))) (* -1 (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0)) (* (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0) attack-ratio)) 0)) (car (car line)) (car (cdr (car line))) 0.5)) (if (< diff 3) (if (not (xor (car (cdr (car line))) (car (cdr (cdr a))))) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (car (cdr (car line))) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (car (cdr (car line))) (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (car (cdr (car line))) 1)) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (+ (car a) 0.5) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1))) ))
+                                                            (if (eq? a null) (list 0 (car (car line)) (cdr (car line)) 1) (if (> (car (cdr (cdr (cdr a)))) 4) (list (+ (if (car (cdr (cdr a))) (* attack-ratio 成五) (* -1 成五)) (car a)) (car (car line)) (car (cdr (car line))) 0) (let ((diff (- (car (cdr a)) (car (car line))))) (if (= diff 1) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (= (round (car a)) (car a)) (if (cdr (car line)) (* -1 (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0)) (* (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0) attack-ratio)) 0)) (car (car line)) (cdr (car line)) 0.5)) (if (< diff 3) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (cdr (car line)) (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1)) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (+ (car a) 0.5) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1))) ))
                                                             )))))
 
 (define value_lines_ (lambda (table keys) (if (eq? keys null) 0 (+ (car (let ((aim-line (sortbycar (hash-ref table (car keys))))) (valueline (cons (cons -100000 (not (cdr (car aim-line)))) (hash-ref table (car keys)))))) (value_lines_ table (cdr keys))))))
@@ -63,5 +63,5 @@
 
 
 ;test/debugging
-(node 0 1 (list (cons 2 2)) 0)
+(node 0 5 (list (cons 2 2)) 0)
 ;(car (generate-aval-map dia (car (car dia)) (cdr (car dia)) '()))
