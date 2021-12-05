@@ -7,9 +7,9 @@
 
 (define branch (lambda (opposite depth aim situ alpha beta able) (
                                                           let ((x (node (+ depth 1) aim (cons (car able) situ) beta))) (if (and (opposite (car x) alpha) (not (eq? (cdr able) null)))
-                                                                                                                           (let ((y (branch opposite depth aim situ alpha (min (car x) beta) (cdr able)))) (if (opposite (car y) (car x)) x y)) x
+                                                                                                                           (let ((y (branch opposite depth aim situ alpha (if (opposite beta (car x)) (car x) beta) (cdr able)))) (if (opposite (car y) (car x)) x y)) x
                                                                                                                            ))))
-(define AI-first 1) ;如果是0则是AI先手，如果是1则是AI后手（人先手）
+(define AI-first 0) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
 
 ;value函数返回值结构：数字
 (define value (lambda (situ) (
@@ -31,9 +31,9 @@
                      )
                ))
 
-(define generate-aval-map (lambda (diagonol x y situ) (if (<= x (car (car (cdr diagonol)))) (if (member (cons x y) situ) (if (= y (cdr (car (cdr diagonol)))) (generate-aval-map diagonol (+ 1 x) (car (cdr (car diagonol))) situ) (generate-aval-map diagonol x (+ 1 y) situ)) (cons (cons x y) (if (= y (cdr (car (cdr diagonol)))) (generate-aval-map diagonol (+ 1 x) (cdr (car diagonol)) situ) (generate-aval-map diagonol x (+ 1 y) situ)))) null)))
+(define generate-aval-map (lambda (diagonol x y situ) (if (<= x (car (car (cdr diagonol)))) (if (member (cons x y) situ) (if (= y (cdr (car (cdr diagonol)))) (generate-aval-map diagonol (+ 1 x) (cdr (car diagonol)) situ) (generate-aval-map diagonol x (+ 1 y) situ)) (cons (cons x y) (if (= y (cdr (car (cdr diagonol)))) (generate-aval-map diagonol (+ 1 x) (cdr (car diagonol)) situ) (generate-aval-map diagonol x (+ 1 y) situ)))) null)))
 
-(define put-xy-in-lines (lambda (situ depth) (if (eq? situ null) (list (hash) (hash) (hash) (hash)) (let* ((xy (car situ)) (next (put-xy-in-lines (cdr situ) (+ depth 1))) (vertical (first next)) (horizontal (second next)) (topleft-bottomright (third next)) (topright-bottomleft (fourth next)) (value-vertical (hash-ref vertical (car xy) #f)) (value-horizontal (hash-ref horizontal (cdr xy) #f)) (value-topleft-bottomright (hash-ref topleft-bottomright (- (cdr xy) (car xy)) #f)) (value-topright-bottomleft (hash-ref topright-bottomleft (+ (cdr xy) (car xy)) #f)) (selves? (if (= (remainder depth 2) AI-first) #t #f)))
+(define put-xy-in-lines (lambda (situ depth) (if (eq? situ null) (list (hash) (hash) (hash) (hash)) (let* ((xy (car situ)) (next (put-xy-in-lines (cdr situ) (+ depth 1))) (vertical (first next)) (horizontal (second next)) (topleft-bottomright (third next)) (topright-bottomleft (fourth next)) (value-vertical (hash-ref vertical (car xy) #f)) (value-horizontal (hash-ref horizontal (cdr xy) #f)) (value-topleft-bottomright (hash-ref topleft-bottomright (- (cdr xy) (car xy)) #f)) (value-topright-bottomleft (hash-ref topright-bottomleft (+ (cdr xy) (car xy)) #f)) (selves? (= (remainder depth 2) AI-first)))
 ;chez fist啥的得写出来,#t是ai下的,#f是人类（对手下的）
                                                                                                       (list (if value-vertical (hash-set (hash-remove vertical (car xy)) (car xy) (cons (cons (cdr xy) selves?) value-vertical)) (hash-set vertical (car xy) (list (cons (cdr xy) selves?))))
                                                                                                             (if value-horizontal (hash-set (hash-remove horizontal (cdr xy)) (cdr xy) (cons (cons (car xy) selves?) value-horizontal)) (hash-set horizontal (cdr xy) (list (cons (car xy) selves?))))
@@ -59,9 +59,8 @@
 (define 活二 5)
 (define 眠二 1)
 (define valuetable (hash '5 成五 '4.5 成五 '4 活四 '3.5 冲四 '3 活三 '2.5 眠三 '2 活二 '1.5 眠二))
-(define attack-ratio 1);进攻系数大于1进攻型，小于1防守型
-
+(define attack-ratio 0.8);进攻系数大于1进攻型，小于1防守型
 
 ;test/debugging
-(node 0 5 (list (cons 2 2)) 0)
-;(car (generate-aval-map dia (car (car dia)) (cdr (car dia)) '()))
+(node 0 1 (list) 1e20)
+
