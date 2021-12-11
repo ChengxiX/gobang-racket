@@ -62,6 +62,8 @@
 (define AI-first 0) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
 
 ;test/debugging
-(node 0 5 (list (cons 9 9)) 0)
-;(valueline (list (cons -100 #t) (cons 1 #t) (cons 2 #t) (cons 3 #t) (cons 6 #t)))
+;(node 0 5 (list (cons 9 9)) 0)
 
+;主程序
+()
+(define loop (lambda ))
