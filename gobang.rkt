@@ -1,7 +1,7 @@
 #lang racket
 (define node (lambda (depth aim situ alphabeta) (
                                                  if (< depth aim)
-                                                    (branch (if (= (remainder depth 2) 0) < >) depth aim situ alphabeta -1e20 (let ((dia (generate-diagonol situ))) (generate-aval-map dia (car (car dia)) (cdr (car dia)) situ)))
+                                                    (branch (if (= (remainder depth 2) 0) <= >=) depth aim situ alphabeta (if (= (remainder depth 2) 0) -1e20 1e20) (let ((dia (generate-diagonol situ))) (generate-aval-map dia (car (car dia)) (cdr (car dia)) situ)))
                                                     (list (value situ) situ)
                                                     )))
 
@@ -45,23 +45,23 @@
 ;valueline递归返回(value 自己的坐标 落子方 连击次数)
 ;需要((1 #t) (3 #f))
 (define valueline (lambda (line) (if (eq? (cdr line) null) (list 0 (car (car line)) (cdr (car line)) 1) (let ((a (valueline (cdr line)))) 
-                                                            (if (> (car (cdr (cdr (cdr a)))) 4) (list (+ (if (car (cdr (cdr a))) (* attack-ratio 成五) (* -1 成五)) (car a)) (car (car line)) (car (cdr (car line))) 0) (let ((diff (- (car (cdr a)) (car (car line))))) (if (= diff 1) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (= (round (car a)) (car a)) (if (cdr (car line)) (* -1 (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0)) (* (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0) attack-ratio)) 0)) (car (car line)) (cdr (car line)) 0.5)) (if (< diff 3) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1) (list (+ (car a) (if (cdr (car line)) (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1)) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1))) ))
+                                                            (if (= (car (cdr (cdr (cdr a)))) 5) (list (+ (if (car (cdr (cdr a))) (* attack-ratio 成五) (* -1 成五)) (car a)) (car (car line)) (cdr (car line)) 0) (let ((diff (- (car (cdr a)) (car (car line))))) (if (= diff 1) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (= (round (car a)) (car a)) (if (cdr (car line)) (* -1 (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0)) (* (hash-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0) attack-ratio)) 0)) (car (car line)) (cdr (car line)) 0.5)) (if (= diff 2) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 0.5 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (cdr (car line)) (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1)) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hash-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1))) ))
                                                             ))))
 
 (define value_lines_ (lambda (table keys) (if (eq? keys null) 0 (+ (car (let ((aim-line (sortbycar (hash-ref table (car keys))))) (valueline (cons (cons -100000 (not (cdr (car aim-line)))) (hash-ref table (car keys)))))) (value_lines_ table (cdr keys))))))
 
-(define 成五 10000)
-(define 活四 100)
+(define 成五 100000)
+(define 活四 1000)
 (define 冲四 50)
 (define 活三 40)
 (define 眠三 10)
 (define 活二 5)
 (define 眠二 1)
-(define valuetable (hash '5 成五 '4.5 成五 '4 活四 '3.5 冲四 '3 活三 '2.5 眠三 '2 活二 '1.5 眠二))
+(define valuetable (hash '4.5 成五  '4 活四 '3.5 冲四 '3 活三 '2.5 眠三 '2 活二 '1.5 眠二))
 (define attack-ratio 0.8);进攻系数大于1进攻型，小于1防守型；建议先手时进攻，后手时防守
 (define AI-first 0) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
 
 ;test/debugging
-;(node 0 1 (list (cons 3 2) (cons 14 0) (cons 2 2) (cons 14 13) (cons 1 2) (cons 9 9)) 1e20)
-(valueline (list (cons -100 #t) (cons 1 #t) (cons 2 #t) (cons 3 #t) (cons 4 #f) (cons 5 #f)))
+(node 0 5 (list (cons 9 9)) 0)
+;(valueline (list (cons -100 #t) (cons 1 #t) (cons 2 #t) (cons 3 #t) (cons 6 #t)))
 
