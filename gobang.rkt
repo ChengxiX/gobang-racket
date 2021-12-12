@@ -65,14 +65,14 @@
 ;(node 0 5 (list (cons 9 9)) 1e20)
 
 ;获取console输入
-(define get-two-from-console (lambda () (cons (read (console-input-port)) (read (console-input-port)))))
+(define get-two-from-console (lambda () (cons (string->int (read-line)) (read-line))))
 
 
 (define index-li (lambda (depth index li) (if (= index depth) (car li) (index-li (+ 1 depth) index (cdr li))))) ;(index-li 1 n list) 
-(define loop (lambda (situ) (let ((res (index-li 1 aim-depth-global (node 0 aim-depth-global situ 1e20)))) (write res (console-output-port)) (loop (cons (get-two-from-console) (cons res situ))))))
+(define loop (lambda (situ) (let ((res (index-li 1 aim-depth-global (node 0 aim-depth-global situ 1e20)))) (write res) (loop (cons (get-two-from-console) (cons res situ))))))
 
 ;主程序
-(define AI-first (read (console-input-port)))
-(define attack-ratio (read (console-input-port)))
-(define aim-depth-global (read (console-input-port)))
-(if (= AI-first 1) (let () (write (cons 8 8) (console-output-port)) (loop (list (get-two-from-console) (cons 8 8)))) (loop (list (get-two-from console))))
+(define AI-first (read-line))
+(define attack-ratio (read-line))
+(define aim-depth-global (read-line))
+(if (= AI-first 1) (let () (write (cons 8 8)) (loop (list (get-two-from-console) (cons 8 8)))) (loop (list (get-two-from-console))))
