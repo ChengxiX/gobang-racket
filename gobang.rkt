@@ -32,7 +32,7 @@
 
 (define generate-aval-map (lambda (diagonol x y situ) (if (<= x (car (car (cdr diagonol)))) (if (member (cons x y) situ) (if (= y (cdr (car (cdr diagonol)))) (generate-aval-map diagonol (+ 1 x) (cdr (car diagonol)) situ) (generate-aval-map diagonol x (+ 1 y) situ)) (cons (cons x y) (if (= y (cdr (car (cdr diagonol)))) (generate-aval-map diagonol (+ 1 x) (cdr (car diagonol)) situ) (generate-aval-map diagonol x (+ 1 y) situ)))) null)))
 
-(define put-xy-in-lines (lambda (situ depth) (if (eq? situ null) (list (hash) (hash) (hash) (hash)) (let* ((xy (car situ)) (next (put-xy-in-lines (cdr situ) (+ depth 1))) (vertical (first next)) (horizontal (second next)) (topleft-bottomright (third next)) (topright-bottomleft (fourth next)) (value-vertical (hash-ref vertical (car xy) #f)) (value-horizontal (hash-ref horizontal (cdr xy) #f)) (value-topleft-bottomright (hash-ref topleft-bottomright (- (cdr xy) (car xy)) #f)) (value-topright-bottomleft (hash-ref topright-bottomleft (+ (cdr xy) (car xy)) #f)) (selves? (= (remainder depth 2) AI-first)))
+(define put-xy-in-lines (lambda (situ depth) (if (eq? situ null) (list (hash) (hash) (hash) (hash)) (let* ((xy (car situ)) (next (put-xy-in-lines (cdr situ) (+ depth 1))) (vertical (car next)) (horizontal (car (cdr next))) (topleft-bottomright (car (cdr (cdr next)))) (topright-bottomleft (car (cdr (cdr (cdr next))))) (value-vertical (hash-ref vertical (car xy) #f)) (value-horizontal (hash-ref horizontal (cdr xy) #f)) (value-topleft-bottomright (hash-ref topleft-bottomright (- (cdr xy) (car xy)) #f)) (value-topright-bottomleft (hash-ref topright-bottomleft (+ (cdr xy) (car xy)) #f)) (selves? (= (remainder depth 2) AI-first)))
 ;chez fist啥的得写出来,#t是ai下的,#f是人类（对手下的）
                                                                                                       (list (if value-vertical (hash-set (hash-remove vertical (car xy)) (car xy) (cons (cons (cdr xy) selves?) value-vertical)) (hash-set vertical (car xy) (list (cons (cdr xy) selves?))))
                                                                                                             (if value-horizontal (hash-set (hash-remove horizontal (cdr xy)) (cdr xy) (cons (cons (car xy) selves?) value-horizontal)) (hash-set horizontal (cdr xy) (list (cons (car xy) selves?))))
@@ -58,12 +58,21 @@
 (define 活二 5)
 (define 眠二 1)
 (define valuetable (hash '4.5 成五  '4 活四 '3.5 冲四 '3 活三 '2.5 眠三 '2 活二 '1.5 眠二))
-(define attack-ratio 0.8);进攻系数大于1进攻型，小于1防守型；建议先手时进攻，后手时防守
-(define AI-first 0) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
+;(define attack-ratio 0.8);进攻系数大于1进攻型，小于1防守型；建议先手时进攻，后手时防守
+;(define AI-first 0) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
 
 ;test/debugging
-;(node 0 5 (list (cons 9 9)) 0)
+;(node 0 5 (list (cons 9 9)) 1e20)
+
+;获取console输入
+(define get-two-from-console (lambda () (cons (read (console-input-port)) (read (console-input-port)))))
+
+
+(define index-li (lambda (depth index li) (if (= index depth) (car li) (index-li (+ 1 depth) index (cdr li))))) ;(index-li 1 n list) 
+(define loop (lambda (situ) (let ((res (index-li 1 aim-depth-global (node 0 aim-depth-global situ 1e20)))) (write res (console-output-port)) (loop (cons (get-two-from-console) (cons res situ))))))
 
 ;主程序
-()
-(define loop (lambda ))
+(define AI-first (read (console-input-port)))
+(define attack-ratio (read (console-input-port)))
+(define aim-depth-global (read (console-input-port)))
+(if (= AI-first 1) (let () (write (cons 8 8) (console-output-port)) (loop (list (get-two-from-console) (cons 8 8)))) (loop (list (get-two-from console))))
