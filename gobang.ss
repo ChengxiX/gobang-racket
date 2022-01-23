@@ -1,4 +1,4 @@
-(import (chezscheme))
+;(import (chezscheme))
 (define node (lambda (depth aim situ alphabeta) (
                                                  if (< depth aim)
                                                     (branch (if (= (remainder depth 2) 0) <= >=) depth aim situ alphabeta (if (= (remainder depth 2) 0) -1e20 1e20) (let ((dia (generate-diagonol situ))) (generate-aval-map dia (car (car dia)) (cdr (car dia)) situ)))
@@ -46,16 +46,16 @@
 (define sortbycar (lambda (line) (sort (lambda (x y) (< (car x) (car y))) line)))
 
 (define valueline (lambda (line) (if (eq? (cdr line) null) (list 0 (car (car line)) (cdr (car line)) 1) (let ((a (valueline (cdr line)))) 
-                                                            (if (= (car (cdr (cdr (cdr a)))) 5) (list (+ (if (car (cdr (cdr a))) (* attack-ratio 成五) (* -1 成五)) (car a)) (car (car line)) (cdr (car line)) 0) (let ((diff (- (car (cdr a)) (car (car line))))) (if (= diff 1) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (= (round (car a)) (car a)) (if (cdr (car line)) (* -1 (hashtable-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0)) (* (hashtable-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0) attack-ratio)) 0)) (car (car line)) (cdr (car line)) 0.5)) (if (= diff 2) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 0.5 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (cdr (car line)) (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0) (* (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1)) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1))) ))
+                                                            (if (= (car (cdr (cdr (cdr a)))) 5) (list (+ (if (car (cdr (cdr a))) (* attack-ratio chengwu) (* -1 chengwu)) (car a)) (car (car line)) (cdr (car line)) 0) (let ((diff (- (car (cdr a)) (car (car line))))) (if (= diff 1) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 1 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (= (round (car a)) (car a)) (if (cdr (car line)) (* -1 (hashtable-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0)) (* (hashtable-ref valuetable (- (car (cdr (cdr (cdr a)))) 0.5) 0) attack-ratio)) 0)) (car (car line)) (cdr (car line)) 0.5)) (if (= diff 2) (if (not (xor (cdr (car line)) (car (cdr (cdr a))))) (list (car a) (car (car line)) (cdr (car line)) (+ 0.5 (car (cdr (cdr (cdr a)))))) (list (+ (car a) (if (cdr (car line)) (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0) (* (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1)) (list (+ (car a) (if (not (car (cdr (cdr a)))) (* -1 (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0)) (* (hashtable-ref valuetable (car (cdr (cdr (cdr a)))) 0) attack-ratio))) (car (car line)) (cdr (car line)) 1))) ))
                                                             ))))
 (define value_lines_ (lambda (table keys) (if (eq? keys null) 0 (+ (car (let ((aim-line (sortbycar (hashtable-ref table (car keys) #f)))) (valueline (cons (cons -100000 (not (cdr (car aim-line)))) aim-line)))) (value_lines_ table (cdr keys))))))
 (define null '())
 (define chengwu 100000)
-(define huosi 1000)
-(define chongsi 50)
+(define huosi 700)
+(define chongsi 400)
 (define huosan 40)
-(define miansan 10)
-(define huoer 5)
+(define miansan 8)
+(define huoer 10)
 (define mianer 1)
 (define valuetable (make-eq-hashtable))
 (hashtable-set! valuetable 4.5 chengwu)
@@ -68,7 +68,7 @@
 (define xor (lambda (a b) (and (or a b) (not (and a b)))))
 
 (define attack-ratio 1)
-(define AI-first 1)
+;(define AI-first 1)
 
 ;testing
 ;(node 0 2 (list (cons 7 6) (cons 7 7)) 1e20)
