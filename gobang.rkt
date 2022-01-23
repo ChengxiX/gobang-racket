@@ -36,8 +36,8 @@
 ;chez fist啥的得写出来,#t是ai下的,#f是人类（对手下的）
                                                                                                       (list (if value-vertical (hash-set (hash-remove vertical (car xy)) (car xy) (cons (cons (cdr xy) selves?) value-vertical)) (hash-set vertical (car xy) (list (cons (cdr xy) selves?))))
                                                                                                             (if value-horizontal (hash-set (hash-remove horizontal (cdr xy)) (cdr xy) (cons (cons (car xy) selves?) value-horizontal)) (hash-set horizontal (cdr xy) (list (cons (car xy) selves?))))
-                                                                                                            (if value-topleft-bottomright (hash-set (hash-remove topleft-bottomright (- (cdr xy) (car xy))) (- (cdr xy) (car xy)) (cons (cons (+ (cdr xy) (car xy)) selves?) value-topleft-bottomright)) (hash-set topleft-bottomright (- (cdr xy) (car xy)) (list (cons (+ (cdr xy) (car xy)) selves?))))
-                                                                                                            (if value-topright-bottomleft (hash-set (hash-remove topright-bottomleft (+ (cdr xy) (car xy))) (+ (cdr xy) (car xy)) (cons (cons (+ (cdr xy) (car xy)) selves?) value-topright-bottomleft)) (hash-set topright-bottomleft (+ (cdr xy) (car xy)) (list (cons (- (cdr xy) (car xy)) selves?))))
+                                                                                                            (if value-topleft-bottomright (hash-set (hash-remove topleft-bottomright (- (cdr xy) (car xy))) (- (cdr xy) (car xy)) (cons (cons (car xy) selves?) value-topleft-bottomright)) (hash-set topleft-bottomright (- (cdr xy) (car xy)) (list (cons (+ (cdr xy) (car xy)) selves?))))
+                                                                                                            (if value-topright-bottomleft (hash-set (hash-remove topright-bottomleft (+ (cdr xy) (car xy))) (+ (cdr xy) (car xy)) (cons (cons (car xy) selves?) value-topright-bottomleft)) (hash-set topright-bottomleft (+ (cdr xy) (car xy)) (list (cons (- (cdr xy) (car xy)) selves?))))
                                                                                                             )
                                                                                                        ))))
                                                                                                        
@@ -62,7 +62,7 @@
 (define AI-first 1) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
 
 ;test/debugging
-(node 0 0 (list (cons 9 6) (cons 5 6) (cons 8 6) (cons 7 7) (cons 7 6) (cons 8 7) (cons 6 6) (cons 8 8)) 1e20)
+(node 0 2 (list (cons 11 10) (cons 6 5) (cons 7 4) (cons 7 5) (cons 7 9) (cons 7 8) (cons 10 9) (cons 7 6) (cons 9 8) (cons 7 7) (cons 8 7) (cons 8 8)) 1e20)
 ;(valueline (list (cons -100000 #f) (cons 5 #t) (cons 6 #f) (cons 7 #f) (cons 8 #f) (cons 9 #f)))
 
 ;获取console输入
