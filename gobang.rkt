@@ -50,16 +50,16 @@
 (define value_lines_ (lambda (table keys) (if (eq? keys null) 0 (+ (car (let ((aim-line (sortbycar (hash-ref table (car keys))))) (valueline (cons (cons -100000 (not (cdr (car aim-line)))) aim-line)))) (value_lines_ table (cdr keys))))))
 (define null '())
 (define 成五 100000)
-(define 活四 1000)
+(define 活四 100)
 (define 冲四 50)
 (define 活三 40)
 (define 眠三 10)
 (define 活二 5)
 (define 眠二 1)
 (define valuetable (hash '4.5 成五  '4 活四 '3.5 冲四 '3 活三 '2.5 眠三 '2 活二 '1.5 眠二))
-(define attack-ratio 1);进攻系数大于1进攻型，小于1防守型；建议先手时进攻，后手时防守
+(define attack-ratio 0.3);进攻系数大于1进攻型，小于1防守型；建议先手时进攻，后手时防守
+
 (define AI-first 1) ;如果是0则是人先手，如果是1则是AI先手，且AI先手时深度为偶数，人先手时为奇数
-
+(define set-AI-first (lambda (a) (set! AI-first a)))
 ;testing
-(node 0 2 (list (cons 7 6) (cons 7 7)))
-
+;(node 0 2 (list (cons 4 6) (cons 4 5) (cons 2 4) (cons 3 4) (cons 3 5) (cons 4 4) (cons 9 5) (cons 6 2) (cons 4 3) (cons 6 3) (cons 8 2) (cons 7 3) (cons 7 4) (cons 6 4) (cons 5 2) (cons 5 3) (cons 5 7) (cons 5 5) (cons 9 7) (cons 5 4) (cons 6 5) (cons 5 6) (cons 7 6) (cons 8 9) (cons 8 7) (cons 8 4) (cons 8 6) (cons 6 8) (cons 8 8) (cons 7 7)) 1e20)
