@@ -1,4 +1,4 @@
-#lang racket
+;lang chezscheme
 (define node (lambda (depth aim situ alphabeta) (
                                                  if (< depth aim)
                                                     (branch (if (= (remainder depth 2) 0) <= >=) depth aim situ alphabeta (if (= (remainder depth 2) 0) -1e20 1e20) (let ((dia (generate-diagonol situ))) (generate-aval-map dia (car (car dia)) (cdr (car dia)) situ)))
